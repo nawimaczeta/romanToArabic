@@ -6,6 +6,9 @@
 
 #include <stdint.h>
 #include <string>
+#include <utility>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -22,32 +25,41 @@ int main(int argc, char **argv)
 class Roman {
 public:
 	Roman(const string & roman) : _roman{ roman } {}
-	uint32_t toArabic() const {
-		uint32_t res = 0;
 
-		if (!(_roman.size() == 0)) {
-			char c = toupper(_roman.back());
-			res = _getArabic(c);
+	uint32_t toArabic() const {
+		int res = 0;
+		uint32_t curArabic = 0;
+		uint32_t prevArabic = 0;
+
+		for (auto it = begin(_roman); it != end(_roman); ++it) {
+			curArabic = _getArabic(toupper(*it));
+			if (curArabic > prevArabic) {
+				res = -res;
+			}
+			res += curArabic;
+			prevArabic = curArabic;
 		}
 
 		return res;
 	}
 
 	uint32_t _getArabic(char roman) const {
-		uint32_t res = 0;
+		using RomanArabicConvertItem = pair<char, uint32_t>;
+		using RomanArabicConvertVector = vector<RomanArabicConvertItem>;
+		const RomanArabicConvertVector ROMAN_ARABIC_CONVERT_VECTOR{
+			{ 'I', 1 },{ 'V', 5 }//, {'X', 10}, {'L', 50}, {'C', 100}, {'M', 1000}
+		};
 
-		switch (roman) {
-		case 'I':
-			res = 1;
-			break;
-		case 'V':
-			res = 5;
-			break;
-		default:
-			throw IllegalSymbol(roman);
-		}
+		auto it = find_if(
+			begin(ROMAN_ARABIC_CONVERT_VECTOR),
+			end(ROMAN_ARABIC_CONVERT_VECTOR),
+			[&](const RomanArabicConvertItem & item) {
+				return (item.first == roman);
+			}
+		);
 
-		return res;
+		if (it == end(ROMAN_ARABIC_CONVERT_VECTOR)) throw IllegalSymbol(roman);
+		else return (*it).second;
 	}
 
 	class IllegalSymbol : public invalid_argument {
@@ -78,4 +90,8 @@ TEST(ARoman, ThrowsWhenIllegalSymbolDetected) {
 TEST(ARoman, GeneratesTheSameOutputForInputInUpperAndLowerCase) {
 	EXPECT_THAT(Roman("V").toArabic(), Roman("v").toArabic());
 	EXPECT_THAT(Roman("I").toArabic(), Roman("i").toArabic());
+}
+
+TEST(ARoman, GeneratesArabic4WhenRomanIVIsGiven) {
+	ASSERT_THAT(Roman("IV").toArabic(), Eq(4));
 }
