@@ -9,6 +9,8 @@
 
 using namespace std;
 
+using ::testing::Eq;
+
 int main(int argc, char **argv)
 {
 	::testing::InitGoogleMock(&argc, argv);
@@ -21,12 +23,17 @@ class Roman {
 public:
 	Roman(const string & roman) : _roman{ roman } {}
 	uint32_t toArabic() const {
-		return 1;
+		if (_roman.size() == 0) return 0;
+		else return 1;
 	}
 private:
 	string _roman;
 };
 
-TEST(ARomanToArabic, GeneratesArabic1WhenIIsGiven) {
-	ASSERT_THAT(Roman("I").toArabic(), ::testing::Eq(1));
+TEST(ARoman, GeneratesArabic1WhenRomanIIsGiven) {
+	ASSERT_THAT(Roman("I").toArabic(), Eq(1));
+}
+
+TEST(ARoman, Generates0WhenEmptyStringIsGiven) {
+	ASSERT_THAT(Roman("").toArabic(), Eq(0));
 }
