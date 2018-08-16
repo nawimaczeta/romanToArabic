@@ -23,8 +23,22 @@ class Roman {
 public:
 	Roman(const string & roman) : _roman{ roman } {}
 	uint32_t toArabic() const {
-		if (_roman.size() == 0) return 0;
-		else return 1;
+		uint32_t res;
+
+		if (_roman.size() == 0) res = 0;
+		else {
+			char c = _roman.back();
+			switch (c) {
+			case 'I':
+				res = 1;
+				break;
+			case 'V':
+				res = 5;
+				break;
+			}
+		}
+
+		return res;
 	}
 private:
 	string _roman;
@@ -36,4 +50,8 @@ TEST(ARoman, GeneratesArabic1WhenRomanIIsGiven) {
 
 TEST(ARoman, Generates0WhenEmptyStringIsGiven) {
 	ASSERT_THAT(Roman("").toArabic(), Eq(0));
+}
+
+TEST(ARoman, GeneratesArabic5WhenRomanVIsGiven) {
+	ASSERT_THAT(Roman("V").toArabic(), Eq(5));
 }
