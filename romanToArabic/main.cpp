@@ -95,3 +95,14 @@ TEST(ARoman, GeneratesTheSameOutputForInputInUpperAndLowerCase) {
 TEST(ARoman, GeneratesArabic4WhenRomanIVIsGiven) {
 	ASSERT_THAT(Roman("IV").toArabic(), Eq(4));
 }
+
+TEST(ARoman, GeneratesCorrectArabicForRomanFromItoVIII) {
+	EXPECT_THAT(Roman("I").toArabic(), Eq(1));
+	EXPECT_THAT(Roman("II").toArabic(), Eq(2));
+	EXPECT_THAT(Roman("III").toArabic(), Eq(3));
+	EXPECT_THAT(Roman("IV").toArabic(), Eq(4));
+	EXPECT_THAT(Roman("V").toArabic(), Eq(5));
+	EXPECT_THAT(Roman("VI").toArabic(), Eq(6));
+	EXPECT_THAT(Roman("VII").toArabic(), Eq(7));
+	EXPECT_THAT(Roman("VIII").toArabic(), Eq(8));
+}
