@@ -26,17 +26,25 @@ public:
 		uint32_t res = 0;
 
 		if (!(_roman.size() == 0)) {
-			char c = _roman.back();
-			switch (c) {
-			case 'I':
-				res = 1;
-				break;
-			case 'V':
-				res = 5;
-				break;
-			default:
-				throw IllegalSymbol(c);
-			}
+			char c = toupper(_roman.back());
+			res = _getArabic(c);
+		}
+
+		return res;
+	}
+
+	uint32_t _getArabic(char roman) const {
+		uint32_t res = 0;
+
+		switch (roman) {
+		case 'I':
+			res = 1;
+			break;
+		case 'V':
+			res = 5;
+			break;
+		default:
+			throw IllegalSymbol(roman);
 		}
 
 		return res;
@@ -65,4 +73,9 @@ TEST(ARoman, GeneratesArabic5WhenRomanVIsGiven) {
 
 TEST(ARoman, ThrowsWhenIllegalSymbolDetected) {
 	ASSERT_THROW(Roman("a").toArabic(), Roman::IllegalSymbol);
+}
+
+TEST(ARoman, GeneratesTheSameOutputForInputInUpperAndLowerCase) {
+	EXPECT_THAT(Roman("V").toArabic(), Roman("v").toArabic());
+	EXPECT_THAT(Roman("I").toArabic(), Roman("i").toArabic());
 }
