@@ -26,43 +26,40 @@ class Roman {
 public:
 	Roman(const string & roman) : _roman{ roman } {}
 
-	uint32_t toArabic() const {
-		int res = 0;
-		uint32_t prevArabic = 0;
-
-		for (auto it = begin(_roman); it != end(_roman); ++it) {
-			uint32_t value = _getArabic(*it);
-			res += _convertRomanSymbol(value, prevArabic);
-		}
-		res += _convertRomanSymbol(0, prevArabic);
-
-		return res;
+	int toArabic() {
+		auto res = _toArabicRecursive(cbegin(_roman), cend(_roman), 0);
+		if (res < 0) throw ConversionError{};
+		else return static_cast<uint32_t>(res);
 	}
-
-	//int toArabicRecursive(string::const_iterator begin, string::const_iterator end, uint32_t previousValue) const {
-	//	if (begin != end) {
-	//		auto res = _convertRomanSymbol(_getArabic(*begin), previousValue);
-	//		return res + toArabicRecursive(++begin, end, previousValue);
-	//	}
-	//	else {
-	//		return _convertRomanSymbol(0, previousValue);
-	//	}
-	//}
 
 	class IllegalSymbol : public invalid_argument {
 	public:
 		IllegalSymbol(char symbol) :
 			invalid_argument{ "Illegal roman symbol " + symbol } {}
 	};
+
+	class ConversionError : public runtime_error {
+	public:
+		ConversionError() :
+			runtime_error{ "Conversion failed" } {}
+	};
 private:
 	string _roman;
 
-	int _convertRomanSymbol(uint32_t value, uint32_t & previousArabic) const {
+	int _processRomanSymbol(uint32_t value, uint32_t & previousArabic) const {
 		int res;
 		if (value > previousArabic) res = _negative(previousArabic);
 		else res = _positive(previousArabic);
 		previousArabic = value;
 		return res;
+	}
+
+	int _toArabicRecursive(string::const_iterator begin, string::const_iterator end, uint32_t previousValue) const {
+		if (begin != end) {
+			auto res = _processRomanSymbol(_getArabic(*begin), previousValue);
+			return res + _toArabicRecursive(++begin, end, previousValue);
+		}
+		else return _processRomanSymbol(0, previousValue);
 	}
 
 	int _negative(uint32_t num) const {
