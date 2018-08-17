@@ -39,6 +39,24 @@ public:
 		return res;
 	}
 
+	//int toArabicRecursive(string::const_iterator begin, string::const_iterator end, uint32_t previousValue) const {
+	//	if (begin != end) {
+	//		auto res = _convertRomanSymbol(_getArabic(*begin), previousValue);
+	//		return res + toArabicRecursive(++begin, end, previousValue);
+	//	}
+	//	else {
+	//		return _convertRomanSymbol(0, previousValue);
+	//	}
+	//}
+
+	class IllegalSymbol : public invalid_argument {
+	public:
+		IllegalSymbol(char symbol) :
+			invalid_argument{ "Illegal roman symbol " + symbol } {}
+	};
+private:
+	string _roman;
+
 	int _convertRomanSymbol(uint32_t value, uint32_t & previousArabic) const {
 		int res;
 		if (value > previousArabic) res = _negative(previousArabic);
@@ -46,7 +64,7 @@ public:
 		previousArabic = value;
 		return res;
 	}
-	
+
 	int _negative(uint32_t num) const {
 		return -_positive(num);
 	}
@@ -74,14 +92,6 @@ public:
 		if (it == end(ROMAN_ARABIC_CONVERT_VECTOR)) throw IllegalSymbol(roman);
 		else return (*it).second;
 	}
-
-	class IllegalSymbol : public invalid_argument {
-	public:
-		IllegalSymbol(char symbol) : 
-			invalid_argument{ "Illegal roman symbol " + symbol } {}
-	};
-private:
-	string _roman;
 };
 
 TEST(ARoman, Generates0WhenEmptyStringIsGiven) {
