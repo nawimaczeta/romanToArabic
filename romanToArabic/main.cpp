@@ -72,9 +72,8 @@ private:
 
 	uint32_t _getArabic(char roman) const {
 		using RomanArabicConvertItem = pair<char, uint32_t>;
-		using RomanArabicConvertVector = vector<RomanArabicConvertItem>;
-		const RomanArabicConvertVector ROMAN_ARABIC_CONVERT_VECTOR{
-			{ 'I', 1 },{ 'V', 5 }, {'X', 10}, {'L', 50}, {'C', 100}, {'M', 1000}
+		const vector<RomanArabicConvertItem> ROMAN_ARABIC_CONVERT_VECTOR{
+			{ 'I', 1 },{ 'V', 5 }, {'X', 10}, {'L', 50}, {'C', 100},{ 'D', 500}, {'M', 1000}
 		};
 
 		roman = toupper(roman);
@@ -102,7 +101,7 @@ TEST(ARoman, ThrowsWhenIllegalSymbolDetected) {
 
 TEST(ARoman, GeneratesTheSameOutputForInputInUpperAndLowerCase) {
 	EXPECT_THAT(Roman("V").toArabic(), Roman("v").toArabic());
-	EXPECT_THAT(Roman("I").toArabic(), Roman("i").toArabic());
+	EXPECT_THAT(Roman("MDXIII").toArabic(), Roman("mdXIiI").toArabic());
 }
 
 TEST(ARoman, GeneratesCorrectArabicFromRoman) {
@@ -127,4 +126,8 @@ TEST(ARoman, GeneratesCorrectArabicFromRoman) {
 	EXPECT_THAT(Roman("XIX").toArabic(), Eq(19));
 	EXPECT_THAT(Roman("XX").toArabic(), Eq(20));
 	EXPECT_THAT(Roman("XXI").toArabic(), Eq(21));
+	EXPECT_THAT(Roman("CCLXXXVIII").toArabic(), Eq(288));
+	EXPECT_THAT(Roman("MMCMXCIX").toArabic(), Eq(2999));
+	EXPECT_THAT(Roman("MMMCDXLVII").toArabic(), Eq(3447));
+	EXPECT_THAT(Roman("MDXIII").toArabic(), Eq(1513));
 }
